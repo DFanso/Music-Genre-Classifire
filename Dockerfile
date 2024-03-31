@@ -12,6 +12,8 @@ WORKDIR /app
 # Copy the requirements file to the working directory
 COPY requirements.txt .
 
+RUN mkdir -p /app/uploaded_audio
+
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
