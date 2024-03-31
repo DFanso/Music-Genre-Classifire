@@ -67,28 +67,41 @@ def predict_genre(audio_path):
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'audio' not in request.files:
-        return jsonify({'error': 'No audio file provided'}), 400
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'error': 'No audio file provided'}), 400
 
-    audio_file = request.files['audio']
-    audio_path = os.path.join(os.getcwd(), 'uploaded_audio', audio_file.filename)
-    audio_file.save(audio_path)
+        audio_file = request.files['audio']
+        audio_path = os.path.join(os.getcwd(), 'uploaded_audio', audio_file.filename)
+        audio_file.save(audio_path)
 
-    predicted_genre = predict_genre(audio_path)
-    return jsonify({'predicted_genre': predicted_genre})
+        predicted_genre = predict_genre(audio_path)
+        return jsonify({'predicted_genre': predicted_genre})
 
+    except FileNotFoundError as e:
+        return jsonify({'error': 'File not found', 'message': str(e)}), 404
+
+    except Exception as e:
+        return jsonify({'error': 'An error occurred during prediction', 'message': str(e)}), 500
 
 if __name__ == "__main__":
-    # Load the models, including the three new MFCC models
-    model_spectrogram = tf.keras.models.load_model(
-        os.path.join(os.getcwd(), "models", "new_spec_model_spectrogram1.h5"))
-    model_mfcc1 = tf.keras.models.load_model(
-        os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc1.h5"))
-    model_mfcc2 = tf.keras.models.load_model(
-        os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc2.h5"))
-    model_mfcc3 = tf.keras.models.load_model(
-        os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc3.h5"))
-    model_mel_spectrogram = tf.keras.models.load_model(
-        os.path.join(os.getcwd(), "models", "final_melspectrogram_model.h5"))
+    try:
+        # Load the models, including the three new MFCC models
+        model_spectrogram = tf.keras.models.load_model(
+            os.path.join(os.getcwd(), "models", "new_spec_model_spectrogram1.h5"))
+        model_mfcc1 = tf.keras.models.load_model(
+            os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc1.h5"))
+        model_mfcc2 = tf.keras.models.load_model(
+            os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc2.h5"))
+        model_mfcc3 = tf.keras.models.load_model(
+            os.path.join(os.getcwd(), "models", "normalized_new_ensemble_classifier_mfcc3.h5"))
+        model_mel_spectrogram = tf.keras.models.load_model(
+            os.path.join(os.getcwd(), "models", "final_melspectrogram_model.h5"))
 
-    app.run()
+        app.run()
+
+    except FileNotFoundError as e:
+        print(f"Error: Model file not found - {str(e)}")
+
+    except Exception as e:
+        print(f"Error: An error occurred during model loading - {str(e)}")
