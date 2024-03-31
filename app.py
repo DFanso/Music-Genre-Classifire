@@ -98,7 +98,7 @@ if __name__ == "__main__":
         model_mel_spectrogram = tf.keras.models.load_model(
             os.path.join(os.getcwd(), "models", "final_melspectrogram_model.h5"))
 
-        app.run()
+        app.run(host='0.0.0.0')
 
     except FileNotFoundError as e:
         print(f"Error: Model file not found - {str(e)}")
