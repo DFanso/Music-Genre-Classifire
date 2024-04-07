@@ -5,9 +5,12 @@ import cv2
 import os
 from pydub import AudioSegment
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 def convert_audio_to_wav(audio_path, target_path=None):
     sound = AudioSegment.from_file(audio_path)
