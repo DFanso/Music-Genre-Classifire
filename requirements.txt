@@ -4,3 +4,4 @@ tensorflow
 opencv-python
 pydub
 flask
+flask_cors
